@@ -2,6 +2,7 @@ const express = require("express")
       app = express()
       bodyParser = require('body-parser')
       confluence = require('./src/confluence');
+      jira = require('./src/jira');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -21,6 +22,8 @@ function init() {
     res.send(respuesta);
   });
 
+  // Confluence
+
   app.get('/confluence/filter', async function(req, res) {
     var content = await confluence.getFilter(req);
 
@@ -39,9 +42,28 @@ function init() {
     res.send(content);
   });
 
+  // Jira
+  app.get('/jira/id', async function(req, res) {
+    var content = await jira.getTask(req);
+
+    res.send(content);
+  });
+
+  app.get('/jira/create', async function(req, res) {
+    var content = await jira.create(req);
+
+    res.send(content);
+  });
+
+  app.get('/jira/remove', async function(req, res) {
+    var content = await jira.remove(req);
+
+    res.send(content);
+  });
+
   app.use(function(req, res, next) {
     respuesta = {
-      codigo: 404, 
+      codigo: 404,
       mensaje: 'URL no encontrada'
     };
     res.status(404).send(respuesta);
